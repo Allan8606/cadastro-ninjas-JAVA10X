@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Tabela de Missões</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            text-decoration: none;
+            border-radius: 5px;
+            color: white;
+            background-color: #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #45a049;
+        }
+
+        .btn-deletar {
+            background-color: #f44336;
+        }
+
+        .btn-deletar:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn-adicionar {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 10px 0;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-adicionar:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Lista de Missões</h1>
+<a class="btn-adicionar" th:href="@{/missoes/ui/adicionar}">Adicionar Nova Missão</a>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Nome</th>
+        <th>Dificuldade</th>
+        <th>Ninjas</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="missao : ${missoes}">
+        <td th:text="${missao.id}"></td>
+        <td th:text="${missao.nome}"></td>
+        <td th:text="${missao.dificuldade}"></td>
+        <td>
+            <span th:if="${missao.ninjas != null}">
+                <span th:each="ninja : ${missao.ninjas}" th:text="${ninja.nome}"> - </span>
+            </span>
+            <span th:if="${missao.ninjas == null or #lists.size(missao.ninjas) == 0}">Sem Ninjas cadastrados para a missão</span>
+        </td>
+        <td>
+            <a th:href="@{/missoes/ui/listar/{id}(id=${missao.id})}">Ver Detalhes</a>
+            <a th:href="@{/missoes/ui/alterar/{id}(id=${missao.id})}">Alterar</a>
+            <a th:href="@{/missoes/ui/deletar/{id}(id=${missao.id})}">Deletar</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

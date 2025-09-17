@@ -6,6 +6,7 @@ import br.com.allanisaacdev.CadastroDeNinjas.Ninjas.NinjaService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Data
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class MissoesService {
 
@@ -26,12 +26,18 @@ public class MissoesService {
 
     private MissoesMapper missoesMapper;
 
-
+    @Autowired
+    public MissoesService(MissoesRepository missoesRepository, MissoesMapper missoesMapper) {
+        this.missoesRepository = missoesRepository;
+        this.missoesMapper = missoesMapper;
+    }
 
     //Listar todas as missões
     public List<MissoesDTO> listarMissoes() {
         List<MissoesModel> missaoModel = missoesRepository.findAll();
-        return missaoModel.stream().map(missoesMapper::map).collect(Collectors.toList());
+        return missaoModel.stream().
+                map(missoesMapper::map).
+                collect(Collectors.toList());
     }
 
     //Mostrar Missar por ID
@@ -54,10 +60,14 @@ public class MissoesService {
     }
 
     //Atualizar Missao por ID
-    public MissoesModel atualizaMissao(Long id, MissoesModel missaoAtualizada){
-        if (missoesRepository.existsById(id)){
-            missaoAtualizada.setId(id);
-            return  missoesRepository.save(missaoAtualizada);
+    public MissoesDTO atualizaMissao(Long id, MissoesDTO missaoAtualizada){
+        Optional<MissoesModel> missaoExistente = missoesRepository.findById(id);
+
+        if (missaoExistente.isPresent()){
+            MissoesModel missaoAtualizadaModel = missoesMapper.map(missaoAtualizada);
+            missaoAtualizadaModel.setId(id);
+            MissoesModel missaoSalvo = missoesRepository.save(missaoAtualizadaModel);
+            return  missoesMapper.map(missaoSalvo);
         }
         return null;
     }

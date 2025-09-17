@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Detalhes da Missão</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        div {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        img {
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 20px;
+            width: 100px;
+            height: 100px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        a:hover {
+            background-color: #45a049;
+        }
+
+        /* Centraliza o botão */
+        .center-btn-container {
+            text-align: center;
+            margin-top: 30px;  /* Adiciona um espaço acima do botão */
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            width: 200px;  /* Ajuste o tamanho do botão se necessário */
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-voltar:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<h1>Detalhes da Missão</h1>
+<div>
+    <h2 th:text="${missao.nome}"></h2>
+    <p><strong>Dificuldade:</strong> <span th:text="${missao.dificuldade}"></span></p>
+
+    <h3>Ninjas Participantes:</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Rank</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ninja : ${missao.ninjas}">
+            <td th:text="${ninja.nome}"></td>
+            <td th:text="${ninja.email}"></td>
+            <td th:text="${ninja.rank}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div class="center-btn-container">
+    <a th:href="@{/missoes/ui/listar}" class="btn-voltar">Voltar para a lista de missões</a>
+</div>
+
+</body>
+</html>

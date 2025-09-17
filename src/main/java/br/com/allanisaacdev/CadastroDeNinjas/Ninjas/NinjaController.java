@@ -1,6 +1,7 @@
 package br.com.allanisaacdev.CadastroDeNinjas.Ninjas;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,13 @@ public class NinjaController {
     //Adicionar Ninja (CREATE)
     @PostMapping("/criar")
     @Operation(summary = "Criar um novo ninja", description = "Essa rota cria um novo ninja no sistema")
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Ninja criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro na criação do ninja")
     })//É a resposta que a API retorna .
-    public ResponseEntity<String> criarNinja(@RequestBody NinjaDTO ninjaModel) {
+    public ResponseEntity<String> criarNinja(
+            @Parameter(description = "Usuario manda os dados do ninja no corpo da requisiçao")
+            @RequestBody NinjaDTO ninjaModel) {
         NinjaDTO ninjaDTO = ninjaService.criarNinja(ninjaModel);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -42,6 +44,11 @@ public class NinjaController {
 
     //Procurar todos os Ninjas (READ)
     @GetMapping("/listar")
+    @Operation(summary = "Lista todos os ninjas", description = "Rota que lista os ninjas cadastrados no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Lista de ninjas retornada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Não foi possível retornar a lista de ninjas")
+    })
     public ResponseEntity<List<NinjaDTO>> mostrarTodosOSNinjas() {
         List<NinjaDTO> listaNinja = ninjaService.listarNinjas();
         return ResponseEntity.ok(listaNinja);
@@ -55,37 +62,51 @@ public class NinjaController {
             @ApiResponse(responseCode = "400", description = "Ninja não encontrado")
     })
     // O ? foi usado para indicar que o ResponseEntity pode retornar qualquer tipo de corpo.
-    public ResponseEntity<?> listarNinjasPorId(@PathVariable Long id) {
-         NinjaDTO ninjaPorId = ninjaService.listarNinjasPorId(id);
+    public ResponseEntity<?> listarNinjasPorId(
+            @Parameter(description = "Usuario manda o id no caminho da requisiçao")
+            @PathVariable Long id) {
+        NinjaDTO ninjaPorId = ninjaService.listarNinjasPorId(id);
 
-         if(ninjaPorId != null){
-             return ResponseEntity.ok(ninjaPorId);
-         }else{
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ninja não existe!");
-         }
+        if(ninjaPorId != null){
+            return ResponseEntity.ok(ninjaPorId);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ninja não existe!");
+        }
 
     }
 
     //Alterar Dados do Ninja (UPDATE)
     @PutMapping("/alterar/{id}")
-    @Operation(summary = "Altera o ninja por id", description = "Rota que altera o ninja pelo id")
+    @Operation(summary = "Altera o ninja por Id", description = "Rota altera um ninja pelo seu id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Ninja alterado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Ninja não encontrado, não foi possível alterar")
+            @ApiResponse(responseCode = "200", description = "Ninja alterado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Ninja nao encontrado, nao foi possivel alterar")
     })
-    public ResponseEntity<?> alterarNinjaPorId(@PathVariable Long id, @RequestBody NinjaDTO ninjaAtualizado) {
-        NinjaDTO ninja =  ninjaService.atualizarNinja(id, ninjaAtualizado);
+    public ResponseEntity<?> alterarNinjaPorId(
+            @Parameter(description = "Usuario manda o id no caminho da requisiçao")
+            @PathVariable Long id,
+            @Parameter(description = "Usuario manda os dados do ninja a ser atualizado no corpo da requisiçao")
+            @RequestBody NinjaDTO ninjaAtualizado) {
 
-        if(ninja != null){
+        NinjaDTO ninja = ninjaService.atualizarNinja(id, ninjaAtualizado);
+        if (ninja != null) {
             return ResponseEntity.ok(ninja);
-        }else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ninja com id: " + id + " não encontrado, impossível alterar!");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Ninja com o id: " + id + " nao existe nos nossos registros");
         }
     }
 
     //Deletar Ninja (DELETE)
     @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<String> deletarNinjaPorId(@PathVariable Long id) {
+    @Operation(summary = "Deleta um ninja", description = "Rota que deleta um ninja pelo id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Ninja deletado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Não foi possível deletar o ninja")
+    })
+    public ResponseEntity<String> deletarNinjaPorId(
+            @Parameter(description = "Usuario manda o id no caminho da requisiçao")
+            @PathVariable Long id) {
 
         if(ninjaService.listarNinjasPorId(id) != null){
             ninjaService.deletarNinjaPorId(id);
